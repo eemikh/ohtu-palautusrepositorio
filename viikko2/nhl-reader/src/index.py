@@ -1,5 +1,5 @@
-import requests
-from player import Player
+from reader import PlayerReader
+from stats import PlayerStats
 
 def aligned_print(data: list[list[tuple[str, str]]]):
     if len(data) == 0:
@@ -34,17 +34,9 @@ def aligned_print(data: list[list[tuple[str, str]]]):
         print()
 
 def main():
-    url = "https://studies.cs.helsinki.fi/nhlstats/2024-25/players"
-    response = requests.get(url).json()
-
-    players = []
-
-    for player_dict in response:
-        player = Player(player_dict)
-        players.append(player)
-
-    finnish_players = [player for player in players if player.nationality == "FIN"]
-    finnish_players.sort(key=lambda player: -player.score())
+    reader = PlayerReader("https://studies.cs.helsinki.fi/nhlstats/2024-25/players")
+    stats =PlayerStats(reader)
+    finnish_players = stats.top_scorers_by_nationality("FIN")
 
     print("Suomalaiset pelaajat:")
 
