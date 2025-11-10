@@ -1,56 +1,33 @@
+from rich.console import Console
+from rich.prompt import Prompt
+from rich.table import Table
+
 from reader import PlayerReader
 from stats import PlayerStats
 
-def aligned_print(data: list[list[tuple[str, str]]]):
-    if len(data) == 0:
-        print()
-        return
-
-    columns = len(data[0])
-    for row in data:
-        assert columns == len(row)
-
-    max_column_lengths = [0] * columns
-    for row in data:
-        for i in range(columns):
-            max_column_lengths[i] = max(max_column_lengths[i], len(row[i][1]))
-
-    for row in data:
-        for i in range(columns):
-            align_dir, string = row[i]
-            alignment = max_column_lengths[i] - len(string)
-
-            if i > 0:
-                print(" ", end="")
-
-            if align_dir == "right":
-                print(" " * alignment, end="")
-
-            print(string, end="")
-
-            if align_dir == "left":
-                print(" " * alignment, end="")
-
-        print()
-
 def main():
-    reader = PlayerReader("https://studies.cs.helsinki.fi/nhlstats/2024-25/players")
-    stats =PlayerStats(reader)
-    finnish_players = stats.top_scorers_by_nationality("FIN")
+    seasons = ["2018-19", "2019-20", "2020-21", "2021-22", "2022-23", "2023-24", "2024-25", "2025-26"]
+    season = Prompt.ask("Kausi", choices=seasons, default="2024-25")
 
-    print("Suomalaiset pelaajat:")
+    reader = PlayerReader(f"https://studies.cs.helsinki.fi/nhlstats/{season}/players")
+    stats = PlayerStats(reader)
 
-    aligned_print([[
-                  ("left", player.name),
-                  ("left", " "),
-                  ("left", player.team),
-                  ("left", " "),
-                  ("right", str(player.goals)),
-                  ("left", "+"),
-                  ("right", str(player.assists)),
-                  ("left", "="),
-                  ("right", str(player.score()))
-              ] for player in finnish_players])
+    nationality = Prompt.ask("Kansallisuus", choices=stats.nationalities)
+    players = stats.top_scorers_by_nationality(nationality)
+
+    table = Table(title=f"Pelaajat maasta {nationality}")
+
+    table.add_column("Nimi", justify="left", style="cyan", no_wrap=True)
+    table.add_column("Joukkueet", style="magenta")
+    table.add_column("Maalit", justify="right", style="green")
+    table.add_column("Syötöt", justify="right", style="green")
+    table.add_column("Pisteet", justify="right", style="green")
+
+    for player in players:
+        table.add_row(player.name, player.team, str(player.goals), str(player.assists), str(player.score()))
+
+    console = Console()
+    console.print(table)
 
 if __name__ == "__main__":
     main()
