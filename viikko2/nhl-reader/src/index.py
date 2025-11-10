@@ -6,7 +6,10 @@ from reader import PlayerReader
 from stats import PlayerStats
 
 def main():
-    seasons = ["2018-19", "2019-20", "2020-21", "2021-22", "2022-23", "2023-24", "2024-25", "2025-26"]
+    seasons = [
+        "2018-19", "2019-20", "2020-21", "2021-22",
+        "2022-23", "2023-24", "2024-25", "2025-26"
+    ]
     season = Prompt.ask("Kausi", choices=seasons, default="2024-25")
 
     reader = PlayerReader(f"https://studies.cs.helsinki.fi/nhlstats/{season}/players")
@@ -24,7 +27,8 @@ def main():
     table.add_column("Pisteet", justify="right", style="green")
 
     for player in players:
-        table.add_row(player.name, player.team, str(player.goals), str(player.assists), str(player.score()))
+        table.add_row(player.name, player.team, str(player.goals),
+                      str(player.assists), str(player.score()))
 
     console = Console()
     console.print(table)

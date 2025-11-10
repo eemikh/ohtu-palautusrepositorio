@@ -14,7 +14,7 @@ class PlayerStats:
                 self.nationalities.append(player.nationality)
 
     def top_scorers_by_nationality(self, nationality: str) -> list[Player]:
-        players = [player for player in self.players if player.nationality == nationality]
-        players.sort(key=lambda player: -player.score())
+        return [player for player in self.top_scorers() if player.nationality == nationality]
 
-        return players
+    def top_scorers(self) -> list[Player]:
+        return sorted(self.players, key=lambda player: -player.score())
