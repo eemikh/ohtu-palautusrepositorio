@@ -38,5 +38,94 @@ class TestKauppa(unittest.TestCase):
         kauppa.tilimaksu("pekka", "12345")
 
         # varmistetaan, että metodia tilisiirto on kutsuttu
-        pankki_mock.tilisiirto.assert_called()
-        # toistaiseksi ei välitetä kutsuun liittyvistä argumenteista
+        # nimi, viite, tili_numero, self._kaupan_tili, summa
+        pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", "33333-44455", 5)
+
+    def test_ostetaan_kaksi_eri_tuotetta_tilisiirto_kutsutaan(self):
+        pankki_mock = Mock()
+        varasto_mock = Mock()
+        viitegeneraattori_mock = Mock()
+
+        viitegeneraattori_mock.uusi.return_value = 42
+
+        def varasto_saldo(tuote_id):
+            if tuote_id == 1:
+                return 10
+            elif tuote_id == 2:
+                return 2
+
+        def varasto_hae_tuote(tuote_id):
+            if tuote_id == 1:
+                return Tuote(1, "maito", 5)
+            elif tuote_id == 2:
+                return Tuote(2, "piimä", 106)
+
+        varasto_mock.saldo.side_effect = varasto_saldo
+        varasto_mock.hae_tuote.side_effect = varasto_hae_tuote
+
+        kauppa = Kauppa(varasto_mock, pankki_mock, viitegeneraattori_mock)
+
+        kauppa.aloita_asiointi()
+        kauppa.lisaa_koriin(1)
+        kauppa.lisaa_koriin(2)
+        kauppa.tilimaksu("pekka", "12345")
+
+        pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", "33333-44455", 111)
+
+    def test_ostetaan_kaksi_samaa_tuotetta_tilisiirto_kutsutaan(self):
+        pankki_mock = Mock()
+        varasto_mock = Mock()
+        viitegeneraattori_mock = Mock()
+
+        viitegeneraattori_mock.uusi.return_value = 42
+
+        def varasto_saldo(tuote_id):
+            if tuote_id == 1:
+                return 10
+
+        def varasto_hae_tuote(tuote_id):
+            if tuote_id == 1:
+                return Tuote(1, "maito", 5)
+
+        varasto_mock.saldo.side_effect = varasto_saldo
+        varasto_mock.hae_tuote.side_effect = varasto_hae_tuote
+
+        kauppa = Kauppa(varasto_mock, pankki_mock, viitegeneraattori_mock)
+
+        kauppa.aloita_asiointi()
+        kauppa.lisaa_koriin(1)
+        kauppa.lisaa_koriin(1)
+        kauppa.tilimaksu("pekka", "12345")
+
+        pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", "33333-44455", 10)
+
+    def test_ostetaan_kaksi_tuotetta_toiste_ei_varastossa_tilisiirto_kutsutaan(self):
+        pankki_mock = Mock()
+        varasto_mock = Mock()
+        viitegeneraattori_mock = Mock()
+
+        viitegeneraattori_mock.uusi.return_value = 42
+
+        def varasto_saldo(tuote_id):
+            if tuote_id == 1:
+                return 10
+            elif tuote_id == 2:
+                return 0
+
+        def varasto_hae_tuote(tuote_id):
+            if tuote_id == 1:
+                return Tuote(1, "maito", 5)
+            elif tuote_id == 2:
+                return Tuote(2, "Suklaalevy", 2)
+
+        varasto_mock.saldo.side_effect = varasto_saldo
+        varasto_mock.hae_tuote.side_effect = varasto_hae_tuote
+
+        kauppa = Kauppa(varasto_mock, pankki_mock, viitegeneraattori_mock)
+
+        kauppa.aloita_asiointi()
+        kauppa.lisaa_koriin(1)
+        kauppa.lisaa_koriin(2)
+        kauppa.tilimaksu("pekka", "12345")
+
+        pankki_mock.tilisiirto.assert_called_with("pekka", 42, "12345", "33333-44455", 5)
