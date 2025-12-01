@@ -1,9 +1,14 @@
+LOVE = 0
+FIFTEEN = 1
+THIRTY = 2
+FORTY = 3
+
 class TennisGame:
     def __init__(self, player1_name, player2_name):
         self.player1_name = player1_name
         self.player2_name = player2_name
-        self.m_score1 = 0
-        self.m_score2 = 0
+        self.m_score1 = LOVE
+        self.m_score2 = LOVE
 
     def won_point(self, player_name):
         if player_name == "player1":
@@ -13,7 +18,7 @@ class TennisGame:
 
     def get_score(self):
         score = ""
-        temp_score = 0
+        temp_score = LOVE
 
         if self.m_score1 == self.m_score2:
             score = tie_name(self.m_score1)
@@ -36,24 +41,24 @@ class TennisGame:
                     score = score + "-"
                     temp_score = self.m_score2
 
-                if temp_score == 0:
+                if temp_score == LOVE:
                     score = score + "Love"
-                elif temp_score == 1:
+                elif temp_score == FIFTEEN:
                     score = score + "Fifteen"
-                elif temp_score == 2:
+                elif temp_score == THIRTY:
                     score = score + "Thirty"
-                elif temp_score == 3:
+                elif temp_score == FORTY:
                     score = score + "Forty"
 
         return score
 
 
 def tie_name(score):
-    if score == 0:
+    if score == LOVE:
         return "Love-All"
-    elif score == 1:
+    elif score == FIFTEEN:
         return "Fifteen-All"
-    elif score == 2:
+    elif score == THIRTY:
         return "Thirty-All"
     else:
         return "Deuce"
