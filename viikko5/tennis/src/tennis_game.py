@@ -17,25 +17,12 @@ class TennisGame:
             self.m_score2 = self.m_score2 + 1
 
     def get_score(self):
-        score = ""
-
         if self.m_score1 == self.m_score2:
-            score = tie_name(self.m_score1)
-        elif self.m_score1 >= 4 or self.m_score2 >= 4:
-            minus_result = self.m_score1 - self. m_score2
-
-            if minus_result == 1:
-                score = "Advantage player1"
-            elif minus_result == -1:
-                score = "Advantage player2"
-            elif minus_result >= 2:
-                score = "Win for player1"
-            else:
-                score = "Win for player2"
+            return tie_name(self.m_score1)
+        elif self.m_score1 > FORTY or self.m_score2 > FORTY:
+            return score_name_over_forty(self.m_score1, self.m_score2)
         else:
-            score = score_name(self.m_score1) + "-" + score_name(self.m_score2)
-
-        return score
+            return score_name(self.m_score1) + "-" + score_name(self.m_score2)
 
 
 def tie_name(score):
@@ -57,3 +44,16 @@ def score_name(score):
         return "Thirty"
     else:
         return "Forty"
+
+def score_name_over_forty(score1, score2):
+    assert score1 != score2
+    player1_advantage = score1 - score2
+
+    if player1_advantage == 1:
+        return "Advantage player1"
+    elif player1_advantage == -1:
+        return "Advantage player2"
+    elif player1_advantage >= 2:
+        return "Win for player1"
+    else:
+        return "Win for player2"
