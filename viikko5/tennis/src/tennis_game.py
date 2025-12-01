@@ -17,13 +17,19 @@ class TennisGame:
             self.m_score2 = self.m_score2 + 1
 
     def get_score(self):
-        if self.m_score1 == self.m_score2:
-            return tie_name(self.m_score1)
-        elif self.m_score1 > FORTY or self.m_score2 > FORTY:
-            return score_name_over_forty(self.m_score1, self.m_score2)
-        else:
-            return score_name(self.m_score1) + "-" + score_name(self.m_score2)
+        return score_name(self.m_score1, self.m_score2)
 
+
+def score_name(score1, score2):
+    assert score1 >= LOVE
+    assert score2 >= LOVE
+
+    if score1 == score2:
+        return tie_name(score1)
+    elif score1 > FORTY or score2 > FORTY:
+        return score_name_over_forty(score1, score2)
+    else:
+        return low_score_name(score1) + "-" + low_score_name(score2)
 
 def tie_name(score):
     if score == LOVE:
@@ -35,7 +41,9 @@ def tie_name(score):
     else:
         return "Deuce"
 
-def score_name(score):
+def low_score_name(score):
+    assert score <= FORTY
+
     if score == LOVE:
         return "Love"
     elif score == FIFTEEN:
