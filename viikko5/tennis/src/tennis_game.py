@@ -1,9 +1,14 @@
+LOVE = 0
+FIFTEEN = 1
+THIRTY = 2
+FORTY = 3
+
 class TennisGame:
     def __init__(self, player1_name, player2_name):
         self.player1_name = player1_name
         self.player2_name = player2_name
-        self.m_score1 = 0
-        self.m_score2 = 0
+        self.m_score1 = LOVE
+        self.m_score2 = LOVE
 
     def won_point(self, player_name):
         if player_name == "player1":
@@ -12,44 +17,51 @@ class TennisGame:
             self.m_score2 = self.m_score2 + 1
 
     def get_score(self):
-        score = ""
-        temp_score = 0
+        return score_name(self.m_score1, self.m_score2)
 
-        if self.m_score1 == self.m_score2:
-            if self.m_score1 == 0:
-                score = "Love-All"
-            elif self.m_score1 == 1:
-                score = "Fifteen-All"
-            elif self.m_score1 == 2:
-                score = "Thirty-All"
-            else:
-                score = "Deuce"
-        elif self.m_score1 >= 4 or self.m_score2 >= 4:
-            minus_result = self.m_score1 - self. m_score2
 
-            if minus_result == 1:
-                score = "Advantage player1"
-            elif minus_result == -1:
-                score = "Advantage player2"
-            elif minus_result >= 2:
-                score = "Win for player1"
-            else:
-                score = "Win for player2"
-        else:
-            for i in range(1, 3):
-                if i == 1:
-                    temp_score = self.m_score1
-                else:
-                    score = score + "-"
-                    temp_score = self.m_score2
+def score_name(score1, score2):
+    assert score1 >= LOVE
+    assert score2 >= LOVE
 
-                if temp_score == 0:
-                    score = score + "Love"
-                elif temp_score == 1:
-                    score = score + "Fifteen"
-                elif temp_score == 2:
-                    score = score + "Thirty"
-                elif temp_score == 3:
-                    score = score + "Forty"
+    if score1 == score2:
+        return tie_name(score1)
+    elif score1 > FORTY or score2 > FORTY:
+        return score_name_over_forty(score1, score2)
+    else:
+        return low_score_name(score1) + "-" + low_score_name(score2)
 
-        return score
+def tie_name(score):
+    if score == LOVE:
+        return "Love-All"
+    elif score == FIFTEEN:
+        return "Fifteen-All"
+    elif score == THIRTY:
+        return "Thirty-All"
+    else:
+        return "Deuce"
+
+def low_score_name(score):
+    assert score <= FORTY
+
+    if score == LOVE:
+        return "Love"
+    elif score == FIFTEEN:
+        return "Fifteen"
+    elif score == THIRTY:
+        return "Thirty"
+    else:
+        return "Forty"
+
+def score_name_over_forty(score1, score2):
+    assert score1 != score2
+    player1_advantage = score1 - score2
+
+    if player1_advantage == 1:
+        return "Advantage player1"
+    elif player1_advantage == -1:
+        return "Advantage player2"
+    elif player1_advantage >= 2:
+        return "Win for player1"
+    else:
+        return "Win for player2"
