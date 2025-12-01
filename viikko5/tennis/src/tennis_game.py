@@ -16,14 +16,7 @@ class TennisGame:
         temp_score = 0
 
         if self.m_score1 == self.m_score2:
-            if self.m_score1 == 0:
-                score = "Love-All"
-            elif self.m_score1 == 1:
-                score = "Fifteen-All"
-            elif self.m_score1 == 2:
-                score = "Thirty-All"
-            else:
-                score = "Deuce"
+            score = tie_name(self.m_score1)
         elif self.m_score1 >= 4 or self.m_score2 >= 4:
             minus_result = self.m_score1 - self. m_score2
 
@@ -53,3 +46,14 @@ class TennisGame:
                     score = score + "Forty"
 
         return score
+
+
+def tie_name(score):
+    if score == 0:
+        return "Love-All"
+    elif score == 1:
+        return "Fifteen-All"
+    elif score == 2:
+        return "Thirty-All"
+    else:
+        return "Deuce"
