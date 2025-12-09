@@ -1,6 +1,8 @@
 from enum import Enum
 from tkinter import ttk, constants, StringVar
 
+from sovelluslogiikka import Kumoa, Miinus, Nollaa, Plus
+
 
 class Komento(Enum):
     SUMMA = 1
@@ -13,6 +15,13 @@ class Kayttoliittyma:
     def __init__(self, sovelluslogiikka, root):
         self._sovelluslogiikka = sovelluslogiikka
         self._root = root
+
+        self._komennot = {
+            Komento.EROTUS: Miinus(self._sovelluslogiikka),
+            Komento.SUMMA: Plus(self._sovelluslogiikka),
+            Komento.NOLLAUS: Nollaa(self._sovelluslogiikka),
+            Komento.KUMOA: Kumoa(self._sovelluslogiikka),
+        }
 
     def kaynnista(self):
         self._arvo_var = StringVar()
@@ -62,14 +71,7 @@ class Kayttoliittyma:
         except Exception:
             pass
 
-        if komento == Komento.SUMMA:
-            self._sovelluslogiikka.plus(arvo)
-        elif komento == Komento.EROTUS:
-            self._sovelluslogiikka.miinus(arvo)
-        elif komento == Komento.NOLLAUS:
-            self._sovelluslogiikka.nollaa()
-        elif komento == Komento.KUMOA:
-            pass
+        self._komennot[komento].suorita(arvo)
 
         self._kumoa_painike["state"] = constants.NORMAL
 
