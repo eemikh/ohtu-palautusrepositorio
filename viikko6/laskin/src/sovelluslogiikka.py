@@ -1,9 +1,19 @@
 class Sovelluslogiikka:
     def __init__(self, arvo=0):
+        self._historia = []
         self._arvo = arvo
 
-    def aseta_arvo(self, arvo):
+    def aseta_arvo(self, arvo, tallenna_historiaan=True):
+        if tallenna_historiaan:
+            self._historia.append(self._arvo)
+
         self._arvo = arvo
+
+    def onko_historia_tyhja(self):
+        return len(self._historia) == 0
+
+    def poista_historiasta(self):
+        return self._historia.pop()
 
     def arvo(self):
         return self._arvo
@@ -34,4 +44,5 @@ class Kumoa:
         self.sovelluslogiikka = sovelluslogiikka
 
     def suorita(self, _arvo):
-        pass
+        if not self.sovelluslogiikka.onko_historia_tyhja():
+            self.sovelluslogiikka.aseta_arvo(self.sovelluslogiikka.poista_historiasta(), tallenna_historiaan=False)
